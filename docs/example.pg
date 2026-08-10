@@ -1,0 +1,6 @@
+pinglu return: "Hello world!";
+
+pinglu: n1 == 2;
+pinglu: n2 == 3;
+
+pinglu return: n1 + n2;
