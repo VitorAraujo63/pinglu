@@ -4,9 +4,9 @@
 
 Repositório para a aula de Compiladores
 
-Jeann Garçoni Alves
-Vitor Henrique Pereira Araujo
-Mateus Amaro da Silva
-Tiago Gabriel da Silva Cruz
-Vinicius Alves da Santana
+Jeann Garçoni Alves <br> 
+Vitor Henrique Pereira Araujo <br> 
+Mateus Amaro da Silva <br> 
+Tiago Gabriel da Silva Cruz <br> 
+Vinicius Alves da Santana <br> 
 Daniel Ferreira Lopes
