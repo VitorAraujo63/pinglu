@@ -6,12 +6,15 @@ char --Palavra-Chave representando um caractere isolado <br>
 decimal --Palavra-Chave representando um valor decimal <br>
 float --Palavra-Chave representando um valor flutuante(real) <br>
 list --Palavra-Chave representando um Array, uma lista de valores <br>
+'=' --Palavra-Chave para a atribuição de valores, ex: "int exemplo = 3" <br>
+
 
 if --Palavra-Chave representando um operador condicional de ação única <br>
 else --Palavra-Chave representando uma exceção caso não seja comprido a condição do operador if <br>
 while --Palavra-Chave representando um operador de repetição condicional, com a repetição sendo interrompida ao comprimento da condição <br>
 for --Palavra-Chave representando um operador de repetição <br>
 pineach --Palavra-Chave representando um operador de repetição que realiza a leitura de uma lista de valores e executa para cada elemento em lista <br>
+
 
 '+' --Operador de soma <br>
 '-' --Operador de Subtração <br>
