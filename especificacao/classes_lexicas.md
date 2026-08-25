@@ -14,6 +14,7 @@ else --Palavra-Chave representando uma exceção caso não seja comprido a condi
 while --Palavra-Chave representando um operador de repetição condicional, com a repetição sendo interrompida ao comprimento da condição <br>
 for --Palavra-Chave representando um operador de repetição <br>
 pineach --Palavra-Chave representando um operador de repetição que realiza a leitura de uma lista de valores e executa para cada elemento em lista <br>
+print --Palavra-Chave representando a saída de um valor para o usuário, ex: "print(x)" <br>
 
 
 '+' --Operador de soma <br>
