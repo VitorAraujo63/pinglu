@@ -1,0 +1,13 @@
+// 04_funcao.pglu — exercita "func" e "return" (funcDecl, fechado em
+// docs/01_recorte.md). Sem tipo de retorno declarado na assinatura,
+// conforme ja fixado em docs/descricao_linguagem.md.
+//
+// Resultado esperado:
+//   8
+
+func soma(int a, int b) {
+    return a + b;
+}
+
+int resultado = soma(5, 3);
+print(resultado);

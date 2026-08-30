@@ -1,0 +1,36 @@
+// example.pglu — o primeiro programa valido do Pinglu, escrito a mao.
+//
+// Este arquivo ainda nao e lido por nenhum programa: o compilador so vai
+// existir a partir do modulo de analise lexica. Ele e a especificacao pelo
+// exemplo -- o alvo contra o qual cada fase construida adiante sera
+// verificada.
+//
+// As decisoes de sintaxe usadas aqui estao registradas em
+// docs/01_recorte.md; a gramatica que descreve esta forma esta em
+// docs/01_gramatica.txt. Esta versao SUBSTITUI o rascunho anterior deste
+// arquivo (a sintaxe "pinglu: ...") -- ver docs/01_recorte.md para o
+// porque da mudanca.
+//
+// Resultado esperado, quando houver interpretador/VM para rodar isto:
+//   8
+//   par
+//   fim
+
+int a = 5;
+int b = 3;
+int soma = a + b;
+int resto = soma - 8;
+
+print(soma);
+
+if (soma == 8 && resto == 0) {
+    print("par");
+} else {
+    print("impar");
+}
+
+int rodando = 1;
+while (rodando == 1) {
+    print("fim");
+    rodando = 0;
+}

@@ -1,45 +1,67 @@
 A gramatica do Pinglu, escrita por extenso no primeiro modulo.
-Esta e a forma de partida: nao esta fatorada e nem toda producao
-esta fechada -- o que falta esta marcado como PENDENTE, e nao
-inventado so para preencher o arquivo. Um modulo futuro (gramaticas
-livres de contexto) retoma este arquivo e registra cada transformacao
-com a forma anterior ao lado da forma final; por isso a forma de
-partida fica preservada aqui, sem "arrumar" antes da hora.
+Nao esta fatorada -- fatoracao fica para o modulo futuro de gramaticas
+livres de contexto, que retoma este arquivo e registra cada transformacao
+com a forma anterior ao lado da forma final. As tres producoes que estavam
+marcadas PENDENTE (funcDecl, forStmt, pineachStmt) foram fechadas depois do
+feedback recebido; a decisao de cada uma, com a alternativa descartada,
+esta em docs/01_recorte.md e docs/04_escolher_e_formas.md.
 
 --- Programa ---
 
 program     := decl* ;
-decl        := varDecl | funcDecl | stmt ;
+decl        := varDecl | funcDecl | formaDecl | stmt ;
 
 varDecl     := TIPO ID "=" expr ";" ;
-TIPO        := "int" | "string" | "char" | "decimal" | "float" | "list" ;
+TIPO        := "int" | "string" | "char" | "decimal" | "float" | "list"
+             | ID ;
+             -- ID aqui cobre um tipo-forma declarado por formaDecl
+             -- (ex.: "Geometria f = circulo(3.0);"), ver
+             -- docs/04_escolher_e_formas.md.
 
-funcDecl    := PENDENTE
-               -- classes_lexicas.md ainda nao tem uma palavra-chave para
-               -- declarar funcao (nem para parametros, nem para o corpo).
-               -- Registrado como pendencia em docs/01_recorte.md.
+funcDecl    := "func" ID "(" params? ")" block ;
+params      := param ( "," param )* ;
+param       := TIPO ID ;
+             -- sem tipo de retorno declarado (fixado em
+             -- descricao_linguagem.md: "Funcoes precisarao declarar o tipo
+             -- de retorno? R: Nao"); "return" e um stmt normal, nao parte
+             -- da assinatura.
+
+formaDecl   := "forma" ID "{" variante+ "}" ;
+variante    := ID "(" params? ")" ";" ;
+             -- declara um tipo-soma fechado: ID (o nome do tipo-forma) e
+             -- cada variante com seus campos tipados. Ver
+             -- docs/04_escolher_e_formas.md.
 
 --- Instrucoes ---
 
-stmt        := ifStmt | whileStmt | forStmt | pineachStmt
-             | printStmt | exprStmt | block ;
+stmt        := ifStmt | whileStmt | forStmt | pineachStmt | escolherStmt
+             | returnStmt | printStmt | exprStmt | block ;
 
 block       := "{" decl* "}" ;
 
 ifStmt      := "if" "(" expr ")" stmt ( "else" stmt )? ;
 whileStmt   := "while" "(" expr ")" stmt ;
 
-forStmt     := PENDENTE
-               -- "for" esta em classes_lexicas.md como palavra-chave, mas
-               -- a forma da clausula (estilo C com inicializacao/condicao/
-               -- passo, ou estilo "for x in faixa") ainda nao foi decidida.
+forStmt     := "for" "(" ( varDecl | exprStmt | ";" ) expr? ";" expr? ")" stmt ;
+             -- estilo C: inicializacao (declaracao ou expressao), condicao,
+             -- passo -- todas opcionais, mas os ";" internos sao
+             -- obrigatorios. Ex.: for (int i = 0; i != 10; i = i + 1) { ... }
 
-pineachStmt := PENDENTE
-               -- mesmo caso do for: "pineach" existe como palavra-chave e
-               -- a descricao diz que le uma lista e executa por elemento,
-               -- mas a sintaxe exata (nome da variavel de iteracao, uso de
-               -- parenteses) ainda nao foi escrita.
+pineachStmt := "pineach" "(" ID "in" expr ")" stmt ;
+             -- ID e o nome da variavel de iteracao, ligada a cada elemento
+             -- da lista avaliada por expr; escopo dela e o corpo do
+             -- pineach, mesma regra de docs/01_recorte.md
+             -- "Escopo lexico e vinculacao de nomes".
 
+escolherStmt := "escolher" expr "{" clausula+ "}" ;
+clausula      := ID "(" identList? ")" "->" stmt ;
+identList     := ID ( "," ID )* ;
+             -- ver docs/04_escolher_e_formas.md para a verificacao de
+             -- cobertura que roda sobre esta producao antes da geracao de
+             -- bytecode -- a gramatica so descreve a forma reconhecivel,
+             -- nao a checagem de exaustao (essa e semantica, nao sintaxe).
+
+returnStmt  := "return" expr? ";" ;
 printStmt   := "print" "(" expr ")" ";" ;
 exprStmt    := expr ";" ;
 
@@ -51,9 +73,23 @@ exprStmt    := expr ";" ;
 expr        := orExpr ;
 orExpr      := andExpr ( "||" andExpr )* ;
 andExpr     := eqExpr ( "&&" eqExpr )* ;
-eqExpr      := addExpr ( "==" addExpr )? ;
+eqExpr      := relExpr ( ( "==" | "!=" ) relExpr )? ;
+relExpr     := addExpr ( ( "<" | ">" ) addExpr )? ;
 addExpr     := primary ( ("+" | "-") primary )* ;
-primary     := ID | NUMBER | STRING | CHAR | "(" expr ")" ;
+primary     := ID | NUMBER | STRING | CHAR
+             | ID "(" argList? ")"
+             | "[" argList? "]"
+             | "(" expr ")" ;
+argList     := expr ( "," expr )* ;
+             -- "[" argList "]" e o literal de lista (ex.: [10, 20, 30]),
+             -- fechado como consequencia de escrever o exemplo do
+             -- pineachStmt -- ver docs/01_recorte.md.
+             -- "ID (" argList ")" cobre tanto chamada de funcao quanto
+             -- construcao de variante de forma (ex.: circulo(3.0)) -- as
+             -- duas so se distinguem na analise semantica, verificando se
+             -- ID nomeia um funcDecl ou uma variante de formaDecl. A
+             -- gramatica nao precisa dessa distincao para reconhecer a
+             -- cadeia.
 
 --- Onde cada nivel da hierarquia de Chomsky comparece ---
 
@@ -66,9 +102,13 @@ contexto por causa dos parenteses em "primary", mas cada TOKEN individual
 (tipo 3) -- e e essa a fronteira entre o que o analisador lexico resolve
 sozinho e o que precisa do analisador sintatico.
 
---- Nota sobre as pendencias ---
+--- Nota sobre as pendencias fechadas ---
 
-As tres producoes marcadas PENDENTE nao tem sintaxe inventada de proposito:
-o material do professor mostra que decisao ruim tomada as pressas custa
-mais caro que decisao adiada e registrada. Elas ficam aqui, visiveis, ate
-que o grupo feche cada uma como uma entrada nova em docs/01_recorte.md.
+As tres producoes que ficaram PENDENTE neste arquivo (funcDecl, forStmt,
+pineachStmt) nao tinham sintaxe inventada de proposito -- o material do
+professor mostra que decisao ruim tomada as pressas custa mais caro que
+decisao adiada e registrada. Elas foram fechadas depois do feedback
+recebido, cada uma como entrada em docs/01_recorte.md (funcDecl, forStmt,
+pineachStmt) ou docs/04_escolher_e_formas.md (formaDecl, escolherStmt, que
+nao existiam antes do feedback). Nenhuma pendencia em aberto neste arquivo
+no momento -- a proxima etapa e fatorar a gramatica, nao fechar producao.

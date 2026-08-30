@@ -1,0 +1,24 @@
+// 02_for_e_relacionais.pglu — exercita o "for" (estilo C, fechado em
+// docs/01_recorte.md) e os operadores relacionais "<" e "!=", que
+// docs/01_exemplo_validado.md tinha documentado como lacuna: sem eles,
+// nao era escrevivel um "while"/"for" decrescente do jeito comum.
+//
+// Resultado esperado, quando houver interpretador/VM para rodar isto:
+//   0
+//   1
+//   2
+//   3
+//   4
+//   fim do for
+//   0
+
+for (int i = 0; i < 5; i = i + 1) {
+    print(i);
+}
+print("fim do for");
+
+int contador = 5;
+while (contador != 0) {
+    contador = contador - 1;
+}
+print(contador);

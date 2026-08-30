@@ -1,0 +1,25 @@
+// 06_escolher_incompleto.pglu — o caso do próprio feedback: falta a
+// cláusula "triangulo". Este arquivo NÃO deve compilar — é o par
+// entrada/saída da recusa por cobertura, não de execução. Nada deve ser
+// emitido; o compilador recusa citando a linha do "escolher" e o nome da
+// variante sem cláusula.
+//
+// Resultado esperado (recusa em tempo de compilação, nada é emitido):
+//   linha 18: o caso 'triangulo' não é tratado
+//
+// (o "linha 12" do exemplo do feedback original era a linha do "escolher"
+// naquele arquivo específico deles — o que importa aqui é que a linha
+// citada seja a do "escolher" que ficou incompleto, não um número fixo.)
+
+forma Geometria {
+    circulo(float r);
+    retangulo(float b, float h);
+    triangulo(float base, float altura);
+}
+
+Geometria f = circulo(3.0);
+
+escolher f {
+    circulo(r)      -> print(3.14 * r * r);
+    retangulo(b, h) -> print(b * h);
+}

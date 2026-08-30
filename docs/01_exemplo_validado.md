@@ -1,6 +1,6 @@
 # O exemplo válido do Pinglu, comentado (Tarefa 2)
 
-`docs/example.pglu` é o par entrada/resultado desta tarefa: um programa
+`exemplos/01_aritmetica_condicional.pglu` é o par entrada/resultado desta tarefa: um programa
 escrito à mão, sem apoio de nenhum compilador, com o que se espera que
 ele produza registrado ao lado. É o primeiro caso de verificação do
 projeto, e continuará valendo muito depois de existirem outros.

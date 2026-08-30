@@ -1,0 +1,13 @@
+// 03_pineach.pglu — exercita "pineach" (fechado em docs/01_recorte.md)
+// e o literal de lista "[ ]", fechado como consequencia direta de este
+// exemplo precisar de um valor de lista para percorrer.
+//
+// Resultado esperado:
+//   10
+//   20
+//   30
+
+list numeros = [10, 20, 30];
+pineach (n in numeros) {
+    print(n);
+}

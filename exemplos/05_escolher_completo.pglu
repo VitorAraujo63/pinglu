@@ -1,0 +1,21 @@
+// 05_escolher_completo.pglu — exercita "forma" e "escolher" (seção 4 do
+// feedback recebido, fechados em docs/04_escolher_e_formas.md). As três
+// variantes de Geometria têm cláusula correspondente: o compilador deve
+// aceitar este programa sem recusa.
+//
+// Resultado esperado:
+//   28.26
+
+forma Geometria {
+    circulo(float r);
+    retangulo(float b, float h);
+    triangulo(float base, float altura);
+}
+
+Geometria f = circulo(3.0);
+
+escolher f {
+    circulo(r)               -> print(3.14 * r * r);
+    retangulo(b, h)          -> print(b * h);
+    triangulo(base, altura)  -> print((base * altura) / 2.0);
+}
