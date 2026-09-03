@@ -63,6 +63,16 @@ um exemplo concreto (por exemplo, o conteúdo de uma string literal, que
 pode conter qualquer caractere exceto aspas) exija resolver isso — e
 nesse momento a decisão entra aqui, com a razão ao lado, não antes.
 
+**Atualização:** esse caso concreto apareceu — a peça "texto entre
+aspas" de `docs/05_padroes_lexicos_e_arvores.md`. A decisão continua
+sendo **não** introduzir coringa: como `especificacao/alfabeto.md`
+enumera um alfabeto finito (89 símbolos), "qualquer símbolo que não seja
+aspas" ainda é uma alternância comum — grande (88 símbolos, 175 nós),
+mas redutível ao núcleo já existente sem operador novo. Coringa só
+passaria a fazer falta se o alfabeto deixasse de ser fechado (por
+exemplo, se o Pinglu passasse a aceitar Unicode arbitrário dentro de uma
+string) — o que não é o caso hoje.
+
 **Quantificador contado** (`x{3,5}`). É redutível — expande em
 concatenações e opcionais —, então caberia pelo critério. Ficou de fora
 porque nenhuma classe léxica do Pinglu precisa dele: identificador,
