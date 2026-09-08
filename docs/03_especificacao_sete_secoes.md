@@ -260,20 +260,3 @@ verificador de cobertura existir de verdade (`scripts/verificar.py` hoje
 só confere léxico, não semântica); fica registrado aqui como a pergunta
 que a próxima fase do compilador precisa deixar respondível, não como algo
 já medido.
-
-## Onde é fácil errar
-
-Responder cada pergunta com a resposta que "soa certa" para uma
-especificação de linguagem, em vez de com a resposta que aquela pergunta
-específica pede — o enunciado real veio com um "sinal de erro" por seção
-exatamente para isso: cada seção tem um jeito característico de ficar
-superficialmente preenchida e substancialmente vazia. Este documento
-tentou responder cada seção esquivando do sinal de erro dela, não só
-preenchendo o formato.
-
-**Como verificar que está correta:** para cada uma das sete seções acima,
-releia só a coluna "Sinal de erro" da imagem do enunciado e confira que a
-resposta escrita aqui não cai nele. A seção 7, em particular, precisa ter
-as quatro partes pedidas (pergunta, grandeza, referência, resultado
-contrário) — se qualquer uma faltar, a seção está incompleta mesmo que
-pareça uma resposta razoável.
