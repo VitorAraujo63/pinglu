@@ -86,19 +86,3 @@ exemplos em `exemplos/`. Quando o lexer existir, o alvo `verificar` do
 `Makefile` passa a chamá-lo em vez da checagem manual — o comando
 continua o mesmo, só o que ele faz por baixo cresce. Isso é o que evita a
 regressão silenciosa que o feedback apontou como risco de adiar.
-
-## Onde é fácil errar
-
-Adiar a decisão de organização até "ter algo para organizar" — e, depois
-do feedback, adiar o comando único até "ter algo de verdade para rodar".
-As duas armadilhas são a mesma: o código (ou o comando) escrito sobre uma
-estrutura já pensada custa muito menos para crescer do que o que é
-inventado depois, quando módulos futuros já dependem de onde as coisas
-estão hoje.
-
-**Como verificar que está correta:** rode `make verificar` — deve terminar
-com código de saída 0 e "0 problema(s) encontrado(s)" contra os seis
-exemplos atuais. Quando a primeira peça de código do compilador for
-escrita, confira que ela cabe num dos diretórios já previstos aqui sem
-precisar inventar um novo, e que `scripts/verificar.py` foi atualizado
-para chamá-la em vez de só checar léxico à mão.
