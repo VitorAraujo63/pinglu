@@ -202,19 +202,3 @@ fica registrada aqui como recomendação para `docs/01_recorte.md`, não
 aplicada por conta própria nesta entrega porque é uma decisão de escopo
 da linguagem (maiúscula ser ou não válida em nome de variável), que
 cabe ao grupo fechar, não a este documento de contagem.
-
-## Onde é fácil errar (revisão desta entrega)
-
-Os mesmos cinco erros que o enunciado lista foram checados nesta
-redação: a folha `vazio` (cadeia vazia) nunca foi trocada pela folha de
-conjunto vazio em nenhuma redução acima; a concatenação de identificador
-e sinal está escrita como árvore associando à esquerda de forma
-explícita (`concat(concat(...), ...)`), não deixada implícita; nenhuma
-subárvore é referenciada duas vezes por posição (`D` é *nomeada* para
-economizar escrita neste documento, mas cada ocorrência sua na árvore
-real é uma cópia independente — a nota da tabela acima em "Notação
-usada" e a duplicação do `+` em `docs/02_nucleo_minimo.md` dizem a mesma
-coisa); as quatro recusas do item 6 têm posição, não só mensagem; e
-nenhuma notação de conveniência (`+`, `?`, `[...]`) aparece dentro das
-árvores da coluna "Núcleo" — só nas colunas "Padrão com açúcar", que
-existem exatamente para separar as duas coisas.
