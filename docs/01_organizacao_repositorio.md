@@ -32,14 +32,14 @@ pinglu/
 └── docs/
     ├── descricao_linguagem.md          — questionário de escopo original, com notas
     │                                      apontando as respostas substituídas
+    ├── exemple.pglu                    — o primeiro programa valido do Pinglu, escrito a mao.
     ├── 01_recorte.md                   — decisões da Tarefa 1, com alternativa descartada
     ├── 01_gramatica.txt                — gramática (pendências fechadas; não fatorada ainda)
     ├── 01_exemplo_validado.md          — comentário sobre o primeiro exemplo e lacunas encontradas
     ├── 02_nucleo_minimo.md             — núcleo de regex e reduções (Tarefa 2 do módulo 2)
-    ├── 03_especificacao_sete_secoes.md — a especificação formal (Tarefa 1 do módulo 2)
-    ├── 04_escolher_e_formas.md         — design do escolher/forma (emenda do feedback)
-    ├── 05_guia_da_atividade.md         — tradução da Tarefa 3 do módulo 2 (padrões/árvores) em passos
-    └── 05_padroes_lexicos_e_arvores.md — a entrega: padrões das classes léxicas reduzidos e contados
+    ├── 02_especificacao_sete_secoes.md — a especificação formal (Tarefa 1 do módulo 2)
+    └── 02_escolher_e_formas.md         — design do escolher/forma (emenda do feedback)
+
 ```
 
 `especificacao/` guarda o vocabulário — o que existe independente de como

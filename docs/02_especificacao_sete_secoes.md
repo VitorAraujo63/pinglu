@@ -23,7 +23,7 @@ simplesmente não fez nada, ou quebrou de um jeito difícil de rastrear até
 a linha certa. O que ela quer obter escrevendo em Pinglu não é o programa
 rodando mais rápido, nem uma sintaxe mais bonita — é uma resposta do
 compilador, antes de rodar, para a pergunta "cobri todos os casos?". Isso
-é o que `docs/04_escolher_e_formas.md` chama de "provar, não percorrer": o
+é o que `docs/02_escolher_e_formas.md` chama de "provar, não percorrer": o
 compilador compara o conjunto de casos escritos contra o conjunto de casos
 que o tipo admite, e recusa a compilação se sobrar um.
 
@@ -168,7 +168,7 @@ naturezas de valor que a linguagem distingue.
 seção é justamente ter só uma natureza — o Pinglu tem sete, mais as
 declaradas por `forma`): `int`, `string`, `char`, `decimal`, `float`,
 `list`, e qualquer tipo declarado com `forma` (um tipo-soma fechado, ver
-`docs/04_escolher_e_formas.md`). Combinar naturezas diferentes sem
+`docs/02_escolher_e_formas.md`). Combinar naturezas diferentes sem
 conversão é um dos erros que a verificação estática apanha.
 
 **O que se verifica, cada um bem escrito e mesmo assim sem sentido:**
@@ -230,7 +230,7 @@ contra a qual ela será comparada, e o resultado que contrariaria a
 expectativa.
 
 **A pergunta:** a verificação de cobertura do `escolher`
-(`docs/04_escolher_e_formas.md`) promete trocar "o caso não previsto
+(`docs/02_escolher_e_formas.md`) promete trocar "o caso não previsto
 quebra em produção" por "o caso não previsto não compila". Isso realmente
 acontece com mais frequência do que aconteceria numa cadeia de `if`/`else
 if` escrita à mão para a mesma decisão, ou a diferença só existe no papel?
@@ -248,7 +248,7 @@ condicionais". É a comparação natural porque é o que o Pinglu propõe
 substituir, não uma linguagem externa.
 
 **O resultado que contrariaria a expectativa:** a expectativa, dada a
-decisão de `docs/04_escolher_e_formas.md`, é 100% de detecção antes de
+decisão de `docs/02_escolher_e_formas.md`, é 100% de detecção antes de
 rodar para a versão com `escolher` (a verificação de cobertura é
 exaustiva por construção — compara duas listas fechadas, não amostra
 entradas) e uma proporção menor que 100% para a versão com `if`/`else if`

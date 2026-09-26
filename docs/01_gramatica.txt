@@ -4,7 +4,7 @@ livres de contexto, que retoma este arquivo e registra cada transformacao
 com a forma anterior ao lado da forma final. As tres producoes que estavam
 marcadas PENDENTE (funcDecl, forStmt, pineachStmt) foram fechadas depois do
 feedback recebido; a decisao de cada uma, com a alternativa descartada,
-esta em docs/01_recorte.md e docs/04_escolher_e_formas.md.
+esta em docs/01_recorte.md e docs/02_escolher_e_formas.md.
 
 --- Programa ---
 
@@ -16,7 +16,7 @@ TIPO        := "int" | "string" | "char" | "decimal" | "float" | "list"
              | ID ;
              -- ID aqui cobre um tipo-forma declarado por formaDecl
              -- (ex.: "Geometria f = circulo(3.0);"), ver
-             -- docs/04_escolher_e_formas.md.
+             -- docs/02_escolher_e_formas.md.
 
 funcDecl    := "func" ID "(" params? ")" block ;
 params      := param ( "," param )* ;
@@ -30,7 +30,7 @@ formaDecl   := "forma" ID "{" variante+ "}" ;
 variante    := ID "(" params? ")" ";" ;
              -- declara um tipo-soma fechado: ID (o nome do tipo-forma) e
              -- cada variante com seus campos tipados. Ver
-             -- docs/04_escolher_e_formas.md.
+             -- docs/02_escolher_e_formas.md.
 
 --- Instrucoes ---
 
@@ -56,7 +56,7 @@ pineachStmt := "pineach" "(" ID "in" expr ")" stmt ;
 escolherStmt := "escolher" expr "{" clausula+ "}" ;
 clausula      := ID "(" identList? ")" "->" stmt ;
 identList     := ID ( "," ID )* ;
-             -- ver docs/04_escolher_e_formas.md para a verificacao de
+             -- ver docs/02_escolher_e_formas.md para a verificacao de
              -- cobertura que roda sobre esta producao antes da geracao de
              -- bytecode -- a gramatica so descreve a forma reconhecivel,
              -- nao a checagem de exaustao (essa e semantica, nao sintaxe).
@@ -109,6 +109,6 @@ pineachStmt) nao tinham sintaxe inventada de proposito -- o material do
 professor mostra que decisao ruim tomada as pressas custa mais caro que
 decisao adiada e registrada. Elas foram fechadas depois do feedback
 recebido, cada uma como entrada em docs/01_recorte.md (funcDecl, forStmt,
-pineachStmt) ou docs/04_escolher_e_formas.md (formaDecl, escolherStmt, que
+pineachStmt) ou docs/02_escolher_e_formas.md (formaDecl, escolherStmt, que
 nao existiam antes do feedback). Nenhuma pendencia em aberto neste arquivo
 no momento -- a proxima etapa e fatorar a gramatica, nao fechar producao.

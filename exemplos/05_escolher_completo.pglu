@@ -1,5 +1,5 @@
 // 05_escolher_completo.pglu — exercita "forma" e "escolher" (seção 4 do
-// feedback recebido, fechados em docs/04_escolher_e_formas.md). As três
+// feedback recebido, fechados em docs/02_escolher_e_formas.md). As três
 // variantes de Geometria têm cláusula correspondente: o compilador deve
 // aceitar este programa sem recusa.
 //

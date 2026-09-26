@@ -120,7 +120,7 @@ escopo novo; um nome declarado dentro de um bloco só é visível dentro dele e
 dos blocos aninhados dentro dele — nunca fora. Declarações no nível do
 `program` (fora de qualquer função ou bloco) são **globais**, visíveis em
 todo o arquivo. Parâmetros de função e nomes ligados por uma cláusula de
-`escolher` (ver `docs/04_escolher_e_formas.md`) seguem a mesma regra: valem
+`escolher` (ver `docs/02_escolher_e_formas.md`) seguem a mesma regra: valem
 só dentro do corpo que os liga.
 
 ```pinglu
