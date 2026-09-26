@@ -14,13 +14,13 @@ analisador léxico existir.
 
 Três operadores e duas folhas.
 
-| Construção   | Papel                                              |
-| ------------ | --------------------------------------------------- |
-| concatenação | núcleo — uma coisa seguida de outra                  |
-| alternância  | núcleo — uma coisa ou outra                          |
-| fecho        | núcleo — zero ou mais repetições                     |
-| símbolo      | folha — um símbolo literal do alfabeto (`alfabeto.md`) |
-| cadeia vazia | folha — produzida pela redução do opcional            |
+| Construção   | Papel                                      |
+| ------------ | ------------------------------------------ |
+| concatenação | núcleo — uma coisa seguida de outra        |
+| alternância  | núcleo — uma coisa ou outra                |
+| fecho        | núcleo — zero ou mais repetições           |
+| símbolo      | folha — um símbolo literal do alfabeto     |
+| cadeia vazia | folha — produzida pela redução do opcional |
 
 Tudo o mais que alguém escrever num padrão é reduzido a isto antes de
 qualquer processamento.
@@ -28,12 +28,12 @@ qualquer processamento.
 ## As reduções, em pares
 
 | O padrão escrito | O que ele significa, reduzido ao núcleo |
-| ------------------ | ----------------------------------------- |
-| `x+`                | `concat(x, fecho(x))`                     |
-| `x?`                | `alt(x, vazio)`                           |
-| `[abc]`             | `alt(alt('a', 'b'), 'c')`                 |
-| `[a-c]`             | `alt(alt('a', 'b'), 'c')`                 |
-| `(x)`               | `x` — o grupo não sobrevive à leitura     |
+| ---------------- | --------------------------------------- |
+| `x+`             | `concat(x, fecho(x))`                   |
+| `x?`             | `alt(x, vazio)`                         |
+| `[abc]`          | `alt(alt('a', 'b'), 'c')`               |
+| `[a-c]`          | `alt(alt('a', 'b'), 'c')`               |
+| `(x)`            | `x` — o grupo não sobrevive à leitura   |
 
 O **grupo** merece nota à parte. Parênteses existem para quem escreve o
 padrão marcar onde a precedência muda; uma vez que a estrutura está
@@ -80,7 +80,7 @@ inteiro, decimal e os operadores da linguagem se descrevem inteiramente
 com `+`, `?`, `*` e classe de símbolos. Se voltar a ser necessário, volta
 como redução, nunca como operador de núcleo.
 
-**Retrovisor (*backreference*) e grupo de captura.** Retrovisor sai da
+**Retrovisor (_backreference_) e grupo de captura.** Retrovisor sai da
 classe das linguagens regulares — um padrão que o usasse não poderia ser
 reconhecido por um autômato finito, o que contradiz a razão de ser desta
 etapa da disciplina. Grupo de captura não tem uso no Pinglu: o

@@ -1,4 +1,4 @@
-Classes Lexicas
+## Classes Lexicas
 
 int --Palavra-Chave representando um valor de número inteiro <br>
 string --Palavra-Chave representando uma cadeia de caracteres <br>
@@ -10,7 +10,6 @@ list --Palavra-Chave representando um Array, uma lista de valores <br>
 func --Palavra-Chave para declarar uma função, ex: "func soma(int a, int b) { return a + b; }" <br>
 return --Palavra-Chave para devolver um valor do corpo de uma função, ex: "return a + b;" <br>
 
-
 if --Palavra-Chave representando um operador condicional de ação única <br>
 else --Palavra-Chave representando uma exceção caso não seja comprido a condição do operador if <br>
 while --Palavra-Chave representando um operador de repetição condicional, com a repetição sendo interrompida ao comprimento da condição <br>
@@ -21,7 +20,6 @@ print --Palavra-Chave representando a saída de um valor para o usuário, ex: "p
 forma --Palavra-Chave que declara um tipo-soma fechado, listando suas variantes possíveis, ex: "forma Geometria { circulo(float r); }" (ver docs/04_escolher_e_formas.md) <br>
 escolher --Palavra-Chave que abre um bloco de casamento de padrão sobre as formas de um valor, ex: "escolher f { ... }" (ver docs/04_escolher_e_formas.md) <br>
 '->' --Símbolo que liga o padrão de uma cláusula do escolher ao código que ela executa <br>
-
 
 '+' --Operador de soma <br>
 '-' --Operador de Subtração <br>
