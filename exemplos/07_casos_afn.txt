@@ -1,0 +1,149 @@
+# 07_casos_afn.txt - bateria conferida A MAO, caso por caso.
+#
+# Formato: expressao <TAB> cadeia <TAB> aceita|recusa
+#
+# O veredito de cada linha foi determinado SEM rodar o programa: vem do
+# raciocinio sobre a linguagem do padrao, anotado nos casos nao obvios. E essa
+# independencia que da valor a bateria. A partir da determinizacao, quase tudo
+# sera verificado contra algo que o proprio sistema produziu, e estes casos
+# serao a evidencia externa que resta. Um caso escrito DEPOIS de ver a saida do
+# programa nao verifica nada: congela o comportamento atual, defeitos inclusive.
+#
+# A cadeia vazia e o campo vazio entre dois tabuladores.
+# Uma linha malformada reprova a bateria, em vez de ser ignorada.
+
+# --- casos base
+a	a	aceita
+a		recusa
+a	b	recusa
+a	aa	recusa
+
+# --- concatenacao
+ab	ab	aceita
+ab	a	recusa
+ab	abc	recusa
+abc	abc	aceita
+abc	ab	recusa
+
+# --- alternancia: a cadeia vazia so entra se uma alternativa a aceitar
+a|b	a	aceita
+a|b	b	aceita
+a|b	c	recusa
+a|b	ab	recusa
+a|b		recusa
+x|y|z	y	aceita
+x|y|z	w	recusa
+
+# --- prefixo comum: o caso que o determinismo nao resolve sem abrir as maquinas
+ab|ac	ab	aceita
+ab|ac	ac	aceita
+ab|ac	ad	recusa
+ab|ac	a	recusa
+ab|ac	abac	recusa
+
+# --- fecho: aceita a cadeia vazia e qualquer repeticao
+a*		aceita
+a*	a	aceita
+a*	aaa	aceita
+a*	aab	recusa
+a*	b	recusa
+a**		aceita
+a**	aaa	aceita
+a**	ab	recusa
+
+# --- fecho sobre interior que pode ser vazio: ciclo so de transicoes vazias
+(a?)*		aceita
+(a?)*	aa	aceita
+(a?)*	b	recusa
+(a*)*		aceita
+(a*)*	aab	recusa
+
+# --- fecho positivo, reduzido na leitura a concat(x, fecho(x))
+a+		recusa
+a+	a	aceita
+a+	aaa	aceita
+a+	ab	recusa
+
+# --- opcional, reduzido na leitura a alt(x, vazio)
+a?		aceita
+a?	a	aceita
+a?	aa	recusa
+a?	b	recusa
+
+# --- o ponto e simbolo literal: o Pinglu nao tem coringa (docs/02_nucleo_minimo.md)
+a.c	a.c	aceita
+a.c	abc	recusa
+a.c	ac	recusa
+a.c	a..c	recusa
+
+# --- barra invertida tira o significado especial do simbolo seguinte
+a\*	a*	aceita
+a\*	aa	recusa
+a\*	a	recusa
+\(a\)	(a)	aceita
+\(a\)	a	recusa
+
+# --- grupo e composicao dos tres operadores
+(ab)*		aceita
+(ab)*	abab	aceita
+(ab)*	aba	recusa
+(ab)*	ba	recusa
+(a|b)*c	c	aceita
+(a|b)*c	abbac	aceita
+(a|b)*c	abb	recusa
+(a|b)*c	ca	recusa
+(a|b)*c		recusa
+(ab|c)*d	d	aceita
+(ab|c)*d	abcabd	aceita
+(ab|c)*d	abcd	aceita
+(ab|c)*d	acd	recusa
+
+# --- classes de simbolos, reduzidas na leitura a alternancias
+[0-9]+	240	aceita
+[0-9]+	24a	recusa
+[0-9]+		recusa
+[a-c]	b	aceita
+[a-c]	d	recusa
+[abc]	c	aceita
+[a-c]+	cab	aceita
+[a-c]+	cad	recusa
+
+# --- identificador do Pinglu: [a-zA-Z_][a-zA-Z0-9_]*
+[a-zA-Z_][a-zA-Z0-9_]*	soma	aceita
+[a-zA-Z_][a-zA-Z0-9_]*	_privado	aceita
+[a-zA-Z_][a-zA-Z0-9_]*	contador2	aceita
+[a-zA-Z_][a-zA-Z0-9_]*	A	aceita
+[a-zA-Z_][a-zA-Z0-9_]*	2contador	recusa
+[a-zA-Z_][a-zA-Z0-9_]*		recusa
+[a-zA-Z_][a-zA-Z0-9_]*	nome-invalido	recusa
+
+# --- numero do Pinglu, sem sinal (o '-' unario e do parser): [0-9]+(\.[0-9]+)?
+[0-9]+(\.[0-9]+)?	42	aceita
+[0-9]+(\.[0-9]+)?	0	aceita
+[0-9]+(\.[0-9]+)?	3.14	aceita
+[0-9]+(\.[0-9]+)?	42.	recusa
+[0-9]+(\.[0-9]+)?	.5	recusa
+[0-9]+(\.[0-9]+)?	1.2.3	recusa
+[0-9]+(\.[0-9]+)?	-5	recusa
+[0-9]+(\.[0-9]+)?		recusa
+
+# --- operadores de dois simbolos do Pinglu
+==|!=|<=|>=|->|&&|\|\|	==	aceita
+==|!=|<=|>=|->|&&|\|\|	!=	aceita
+==|!=|<=|>=|->|&&|\|\|	<=	aceita
+==|!=|<=|>=|->|&&|\|\|	>=	aceita
+==|!=|<=|>=|->|&&|\|\|	->	aceita
+==|!=|<=|>=|->|&&|\|\|	&&	aceita
+==|!=|<=|>=|->|&&|\|\|	||	aceita
+==|!=|<=|>=|->|&&|\|\|	=	recusa
+==|!=|<=|>=|->|&&|\|\|	&	recusa
+==|!=|<=|>=|->|&&|\|\|	|	recusa
+==|!=|<=|>=|->|&&|\|\|	=>	recusa
+==|!=|<=|>=|->|&&|\|\|	===	recusa
+==|!=|<=|>=|->|&&|\|\|		recusa
+
+# --- cadeia literal simplificada: aspas, letras minusculas e espaco
+"[a-z ]*"	"ola mundo"	aceita
+"[a-z ]*"	""	aceita
+"[a-z ]*"	"ola	recusa
+"[a-z ]*"	"ola" "x"	recusa
