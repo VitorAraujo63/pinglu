@@ -68,7 +68,10 @@ namespace
                 for (const char simbolo : caso.cadeia)
                 {
                     // Reaproveita o mesmo tratamento de símbolo invisível da execução.
-                    eco += simbolo == '\n' ? std::string("\\n") : std::string(1, simbolo);
+                    eco += simbolo == '\n'   ? std::string("\\n")
+                           : simbolo == '\t' ? std::string("\\t")
+                           : simbolo == '\r' ? std::string("\\r")
+                                             : std::string(1, simbolo);
                 }
                 std::cout << (correto ? "  [ok]    " : "  [FALHOU] ")
                           << preencher("\"" + eco + "\"", 22) << " "
@@ -124,16 +127,18 @@ int main()
 
         falhas += secao(
             pinglu::afdCadeiaDeCaracteres(),
-            "'\"' (qualquer menos '\"' e '\\' | '\\' ('\"' | '\\' | n | t))* '\"'",
+            "'\"' (qualquer byte menos '\"', '\\' e nova linha | '\\' ('\"' | '\\' | n | t))* '\"'",
             {
                 {R"("texto")", true, "fechada"},
                 {R"("")", true, "fechada"},
                 {R"("fim do for")", true, "fechada"},
                 {R"("a\"b")", true, "fechada", true},
-                {R"("aberta)", false},         // nunca fechada
-                {R"("a\x")", false, "", true}, // \x nao e escape valido
-                {R"("a""b")", false},          // duas cadeias, nao uma
-                {"\"n\xc3\xa3o\"", false},     // acento: bytes fora do alfabeto
+                {R"("aberta)", false},                         // nunca fechada
+                {R"("a\x")", false, "", true},                 // \x nao e escape valido
+                {R"("a""b")", false},                          // duas cadeias, nao uma
+                {"\"n\xc3\xa3o: sim\"", true, "fechada"},      // acento e dois-pontos: bytes comuns
+                {"\"quem? `sim` \xc2\xb4\"", true, "fechada"}, // ?, crase e acento agudo: bytes comuns em texto
+                {"\"a\nb\"", false, "", true},                 // nova linha dentro da cadeia: sem transicao
             });
 
         falhas += secao(
@@ -144,16 +149,20 @@ int main()
                 {R"('\n')", true, "fechada"},
                 {R"('\'')", true, "fechada", true},
                 {"'\"'", true, "fechada"},
-                {"''", false, "", true}, // vazio: de `aberta` a aspa nao tem transicao
-                {"'ab'", false},         // dois caracteres
+                {"''", false, "", true},  // vazio: de `aberta` a aspa nao tem transicao
+                {"'?'", false, "", true}, // o ? saiu de Sigma: como char, e recusado
+                {"'ab'", false},          // dois caracteres
                 {"'a", false},
             });
 
         falhas += secao(
             pinglu::afdComentarioDeLinha(),
-            "'//' (qualquer simbolo menos nova linha)*",
+            "'//' (qualquer byte menos nova linha)*",
             {
                 {"// ola mundo", true, "no_comentario"},
+                // o comentario real de exemplos/05: acento, travessao (3 bytes) e dois-pontos
+                {"// exercita \"forma\" \xe2\x80\x94 se\xc3\xa7\xc3\xa3o 4: cl\xc3\xa1usula", true, "no_comentario"},
+                {"//\r", true, "no_comentario"}, // CRLF: o \r e um byte comum do comentario
                 {"//", true, "no_comentario"},
                 {"/ ola", false},
                 {"// a\nb", false, "", true}, // a nova linha encerra o comentario
@@ -179,6 +188,18 @@ int main()
                 {"=>", false},
                 {"a", false},
                 {"", false},
+            });
+
+        falhas += secao(
+            pinglu::afdSeparadores(),
+            "(espaco | tab | nova linha | \\r)+   (descartados pelo lexer, fora de Sigma)",
+            {
+                {" ", true, "corpo"},
+                {"  \t\n", true, "corpo"},
+                {"\r\n", true, "corpo", true}, // fim de linha CRLF: um separador so
+                {"", false},
+                {"a", false},
+                {" a", false, "", true}, // o separador acaba onde comeca o token
             });
 
         // --- a conta da representacao (docs/03_representacao_transicao.md) ------

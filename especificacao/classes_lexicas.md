@@ -44,11 +44,13 @@ identificador -- nome de variável, função ou parâmetro declarado pelo progra
 numero_inteiro -- literal do tipo int <br>
 numero_float -- literal do tipo float <br>
 cadeia_de_caracteres -- literal do tipo string, delimitado por aspas duplas: `"texto"`.
+Qualquer byte entra no corpo, exceto aspa dupla, barra invertida e nova linha
+(ver "Dentro de comentário e de string" em alfabeto.md).
 Escapes: `\"`, `\\`, `\n`, `\t` <br>
 caractere -- literal do tipo char, delimitado por aspas simples e com
 exatamente um caractere entre elas: `'a'`. Escapes: `\'`,
 `\\`, `\n` (o resultado do escape ainda conta como um
-único caractere) <br>
+único caractere). Só símbolos ASCII de Σ e o espaço: `'é'` é recusado <br>
 lista_literal -- ver seção "Listas" abaixo <br>
 
 ## Simbolos / Delimitadores
@@ -109,7 +111,15 @@ comentário de linha do módulo 3. A regra do analisador léxico é sempre a de
 
 ## Comentarios
 
-Comentário de linha: `//` seguido de qualquer coisa até o fim da linha.
+Comentário de linha: `//` seguido de qualquer byte, menos a nova linha, que o
+encerra. Acentos, travessão e dois-pontos são aceitos (ver "Dentro de
+comentário e de string" em alfabeto.md).
+
+## Separadores
+
+Espaço, tabulação, nova linha e retorno de carro **entre** tokens. Não geram token:
+o lexer os reconhece e os descarta, e eles não pertencem a Σ (ver "Separadores"
+em alfabeto.md). Servem para separar tokens, e uma sequência deles vale por um só.
 
 ## Observacoes abertas
 

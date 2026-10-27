@@ -1,77 +1,92 @@
 # A organização do repositório de trabalho (Tarefa 3)
 
 O que a tarefa pede é montar o repositório separando o que se lê do que
-se compila, com um jeito único de reconstruir e rodar tudo assim que
-houver algo para compilar. O Pinglu ainda está na fase de documentação —
-nenhum analisador léxico, parser ou VM existe ainda —, mas o comando único
-já existe (`make verificar`, ver abaixo): o feedback recebido apontou que
-"instalá-lo agora custa cinco minutos", e adiar isso até existir código de
-verdade era exatamente o erro que a seção "Onde é fácil errar" deste
-documento já alertava contra.
+se compila, com um jeito único de reconstruir e rodar tudo. O comando
+único existe desde a documentação (`make verificar`): o feedback recebido
+apontou que "instalá-lo agora custa cinco minutos", e adiar isso até existir
+código de verdade era exatamente o erro que a seção "Onde é fácil errar"
+deste documento já alertava contra. Hoje ele já carrega código: o analisador
+de expressões regulares (módulo 02) e os autômatos finitos (módulo 03).
+Nenhum analisador léxico, parser ou VM do Pinglu existe ainda.
 
-## O que já existe, e o papel de cada parte
+## O que existe, e o papel de cada parte
 
 ```
 pinglu/
-├── README.md                          — apresentação e integrantes
-├── Makefile                           — o comando único: "make verificar"
+├── README.md                           — apresentação, integrantes e como rodar
+├── Makefile                            — o comando único: "make verificar"
+├── .gitignore                          — build/: binários gerados não se versionam
 ├── especificacao/
-│   ├── alfabeto.md                     — o alfabeto Σ da linguagem
-│   └── classes_lexicas.md              — palavras-chave, operadores, o vocabulário
-├── exemplos/                           — pares entrada/saída esperada, um .pglu por caso
-│   ├── 01_aritmetica_condicional.pglu   — o exemplo original da Tarefa 2 (migrado de docs/)
-│   ├── 02_for_e_relacionais.pglu        — for estilo C, operadores relacionais
-│   ├── 03_pineach.pglu                  — pineach e literal de lista
-│   ├── 04_funcao.pglu                   — func/return
-│   ├── 05_escolher_completo.pglu        — forma/escolher exaustivo (aceito)
-│   └── 06_escolher_incompleto.pglu      — forma/escolher incompleto (deve ser recusado)
+│   ├── alfabeto.md                      — o alfabeto Σ da linguagem
+│   └── classes_lexicas.md               — palavras reservadas, literais, símbolos,
+│                                           operadores e comentários
+├── exemplos/                            — pares entrada/saída esperada, um .pglu por caso
+│   ├── 01_aritmetica_condicional.pglu    — o exemplo original da Tarefa 2 (migrado de docs/)
+│   ├── 02_for_e_relacionais.pglu         — for estilo C, operadores relacionais
+│   ├── 03_pineach.pglu                   — pineach e literal de lista
+│   ├── 04_funcao.pglu                    — func/return
+│   ├── 05_escolher_completo.pglu         — forma/escolher exaustivo (aceito)
+│   └── 06_escolher_incompleto.pglu       — forma/escolher incompleto (deve ser recusado)
+├── src/                                 — o código do compilador, um par .h/.cpp por assunto
+│   ├── 02_regex_pinglu.h/.cpp            — expressão regular -> árvore reduzida ao núcleo,
+│   │                                        com recusa e posição do erro
+│   └── 03_afd.h/.cpp                     — o AFD (matriz densa, função total) e as sete
+│                                            máquinas das classes léxicas
+├── demos/                               — uma demonstração por módulo, com a saída esperada
+│   ├── 02_demo.cpp                       — reduções, notações equivalentes, erros com posição
+│   └── 03_demo.cpp                       — tabelas, casos aceitos e recusados, conta de memória
 ├── scripts/
-│   └── verificar.py                    — o que "make verificar" roda; hoje confere
-│                                          consistência léxica dos exemplos contra
-│                                          especificacao/classes_lexicas.md
+│   └── verificar.py                     — consistência léxica dos exemplos e sincronia da
+│                                            lista de reservadas com classes_lexicas.md
 └── docs/
-    ├── descricao_linguagem.md          — questionário de escopo original, com notas
-    │                                      apontando as respostas substituídas
-    ├── exemple.pglu                    — o primeiro programa valido do Pinglu, escrito a mao.
-    ├── 01_recorte.md                   — decisões da Tarefa 1, com alternativa descartada
-    ├── 01_gramatica.txt                — gramática (pendências fechadas; não fatorada ainda)
-    ├── 01_exemplo_validado.md          — comentário sobre o primeiro exemplo e lacunas encontradas
-    ├── 02_nucleo_minimo.md             — núcleo de regex e reduções (Tarefa 2 do módulo 2)
-    ├── 02_especificacao_sete_secoes.md — a especificação formal (Tarefa 1 do módulo 2)
-    └── 02_escolher_e_formas.md         — design do escolher/forma (emenda do feedback)
-
+    ├── descricao_linguagem.md           — questionário de escopo original, com notas
+    │                                       apontando as respostas substituídas
+    ├── example.pglu                     — o primeiro programa válido do Pinglu, escrito à mão
+    ├── 01_recorte.md                    — decisões da Tarefa 1, com alternativa descartada
+    ├── 01_gramatica.txt                 — gramática (pendências fechadas; não fatorada ainda)
+    ├── 01_exemplo_validado.md           — comentário sobre o primeiro exemplo e lacunas encontradas
+    ├── 02_nucleo_minimo.md              — núcleo de regex e reduções (Tarefa 2 do módulo 2)
+    ├── 02_especificacao_sete_secoes.md  — a especificação formal (Tarefa 1 do módulo 2)
+    ├── 02_escolher_e_formas.md          — design do escolher/forma (emenda do feedback)
+    └── 03_representacao_transicao.md    — a representação da função de transição, a conta
+                                            em bytes e as pendências do alfabeto
 ```
 
 `especificacao/` guarda o vocabulário — o que existe independente de como
 o compilador vai ser escrito. `exemplos/` guarda os pares entrada/saída
-esperada — a mesma pasta que este documento previa antes de existir mais
-de um caso; migrou assim que o segundo caso apareceu, exatamente como
-planejado abaixo. `scripts/` guarda o que hoje é o único código do
-projeto — não o compilador em si, mas o verificador que faz as vezes dele
-enquanto ele não existe. `docs/` guarda as decisões de projeto. Essa
-separação é a mesma que o material do professor recomenda: o que se lê
-fica isolado do que se compila, para que trocar a implementação nunca
-signifique reescrever a especificação junto.
+esperada. `src/` guarda o que é compilado, e `demos/` guarda o que o exercita.
+`scripts/` guarda o verificador, que confere a documentação contra os exemplos.
+`docs/` guarda as decisões de projeto. Essa separação é a mesma que o material
+do professor recomenda: o que se lê fica isolado do que se compila, para que
+trocar a implementação nunca signifique reescrever a especificação junto.
 
-## O que falta acrescentar quando o código do compilador começar
+## O que `make verificar` roda
 
-Quando a primeira peça do compilador for escrita (o analisador léxico, a
-próxima etapa natural depois deste módulo), a organização recomendada é:
+Três coisas, nesta ordem, e para na primeira que falhar:
 
-```
-pinglu/
-├── especificacao/      (como já está)
-├── docs/                (como já está)
-├── exemplos/            (como já está)
-├── scripts/
-│   └── verificar.py     — cresce para chamar o lexer/parser/VM de verdade
-│                           em vez da checagem léxica manual de hoje
-├── src/                 — o código do compilador, futuro
-│   └── pinglu/           — o pacote Python (nome já reservado)
-└── tests/                — os testes automatizados, futuro
-```
+1. `scripts/verificar.py` — toda palavra reservada usada em `exemplos/` tem
+   entrada em `classes_lexicas.md`, e a lista de reservadas do script é
+   igual à da especificação (a segunda checagem existe porque as duas já
+   divergiram uma vez, sem nenhum sintoma).
+2. `build/02_demo` — o analisador de expressões, com a saída esperada de cada
+   caso escrita ao lado.
+3. `build/03_demo` — os autômatos, com os casos aceitos e recusados de cada
+   máquina e a conta de memória.
 
-Duas decisões continuam valendo, agora com o comando único já em uso:
+As duas demonstrações saem com código 1 se um caso divergir do esperado. É isso
+que as torna testes, e não só exibição. Para rodar uma só: `make regex` ou
+`make afd`. Para apagar o que foi gerado: `make limpar`.
+
+Pré-requisitos: `make`, `g++` com suporte a C++20 e `python3` 3.9 ou superior
+(a sintaxe `set[str]` do script exige isso). Testado com `g++` 13.3 e
+`python3` 3.12; outras versões não foram testadas. Em Windows, o caminho mais
+simples é WSL ou MSYS2.
+
+## O que falta acrescentar
+
+As próximas peças (o analisador léxico, a construção de Thompson, a
+determinização) entram em `src/` e `demos/` da mesma forma. Três decisões
+continuam valendo:
 
 **Um arquivo por assunto**, não um arquivo único com tudo — o mesmo
 princípio do material do professor (`01_linguagem.h`/`.cpp` separado de
@@ -80,9 +95,11 @@ sintática, análise semântica, geração de bytecode, máquina virtual) ganha
 seu próprio módulo, para que trocar a representação de uma fase não
 obrigue a tocar nas outras.
 
-**Um comando único para rodar tudo.** Já existe (`make verificar`) e já
-roda algo real, mesmo que pouco: a checagem de consistência léxica dos seis
-exemplos em `exemplos/`. Quando o lexer existir, o alvo `verificar` do
-`Makefile` passa a chamá-lo em vez da checagem manual — o comando
-continua o mesmo, só o que ele faz por baixo cresce. Isso é o que evita a
-regressão silenciosa que o feedback apontou como risco de adiar.
+**Um comando único para rodar tudo.** O comando continua o mesmo, só o que
+ele faz por baixo cresce. Quando o lexer existir, `verificar.py` passa a
+compará-lo com os exemplos de `exemplos/` em vez de só conferir o vocabulário.
+
+**Toda peça nova de `src/` ganha uma demonstração em `demos/` que sai com
+código 1 se divergir do esperado.** Um módulo que compila mas que nenhum comando
+exercita é o caso que o analisador de expressões era até esta revisão: o defeito
+entraria sem sintoma e só apareceria quando a peça seguinte tropeçasse nele.

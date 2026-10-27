@@ -76,29 +76,46 @@ namespace pinglu
 
         // --- os alfabetos -----------------------------------------------------
         //
-        // O Σ de especificacao/alfabeto.md tem 89 símbolos. Dois problemas, ambos
-        // registrados em docs/03_representacao_transicao.md como pendência:
-        //   1. O `´` (U+00B4) não é ASCII: ocupa dois bytes em UTF-8, e uma
-        //      máquina indexada por byte não o enxerga como um símbolo só. Fica
-        //      de fora destes alfabetos, que são os 88 símbolos ASCII de Σ.
-        //   2. Σ não tem espaço nem nova linha, mas os exemplos os usam o tempo
-        //      todo (`print("fim do for")`, todo comentário). As máquinas de
-        //      texto acrescentam o espaço; a de comentário acrescenta também a
-        //      nova linha, que é o que a faz parar "no fim da linha".
+        // Decisão do grupo (27/10/2026, especificacao/alfabeto.md): dentro de
+        // string e de comentário, QUALQUER BYTE é aceito. Por isso as máquinas
+        // de cadeia e de comentário declaram os 256 bytes como alfabeto, e o que
+        // elas recusam é dito por transição (aspas, barra, nova linha), não por
+        // alfabeto: um acento ou um travessão dentro de um comentário é um byte
+        // como outro qualquer, e o lexer não precisa entender UTF-8 para
+        // atravessá-lo.
+        //
+        // A máquina de caractere NÃO entra nessa decisão: ela continua com os
+        // 86 símbolos de Σ mais o espaço, porque um literal char é
+        // exatamente UM símbolo, e uma letra acentuada ocupa dois bytes em
+        // UTF-8 (`'é'` é recusado). A máquina de identificador e a de operadores
+        // também não mudam: fora de texto, o alfabeto continua sendo o de Σ.
 
         std::string letras() { return faixa('a', 'z') + faixa('A', 'Z'); }
 
         std::string digitos() { return faixa('0', '9'); }
 
-        // Os 23 símbolos ASCII de Σ que sobram depois de letras, dígitos e dos
-        // três que as máquinas de texto tratam à parte: ' " \ .
-        std::string simbolosComuns() { return "/*-+_=&%!;,|<>`(){}[].?"; }
+        // Os 21 símbolos de Σ que sobram depois de letras, dígitos e dos três que
+        // as máquinas de texto tratam à parte: ' " \ . (O `?`, a crase e o `´`
+        // saíram de Σ em 27/10/2026.)
+        std::string simbolosComuns() { return "/*-+_=&%!;,|<>(){}[]."; }
 
         // Σ ASCII + espaço. A ordem põe ' " \ no fim de propósito: "tudo menos
         // aspas e barra" vira poucas faixas contíguas na tabela impressa.
         std::string alfabetoDeTexto()
         {
             return letras() + digitos() + simbolosComuns() + " " + "'" + "\"" + "\\";
+        }
+
+        // Todos os 256 bytes, do 0x00 ao 0xFF: o alfabeto das máquinas de texto
+        // livre (cadeia e comentário).
+        std::string todosOsBytes()
+        {
+            std::string bytes;
+            for (int codigo = 0; codigo < 256; ++codigo)
+            {
+                bytes += static_cast<char>(codigo);
+            }
+            return bytes;
         }
 
     } // namespace
@@ -479,22 +496,29 @@ namespace pinglu
         return afd;
     }
 
-    // cadeia := '"' ( qualquer-menos-aspas-e-barra | '\' ('"' | '\' | 'n' | 't') )* '"'
+    // cadeia := '"' ( qualquer-byte-menos-aspas-barra-e-nova-linha
+    //               | '\' ('"' | '\' | 'n' | 't') )* '"'
+    //
+    // Qualquer byte cabe no corpo (acento, travessão, dois-pontos), menos três:
+    // a aspa, que fecha; a barra, que abre um escape; e a nova linha, que é
+    // recusada de propósito: uma cadeia não atravessa linhas, e sem isso uma
+    // aspa esquecida engoliria o arquivo inteiro até a próxima aspa. A nova
+    // linha É do alfabeto desta máquina e não tem transição: a recusa sai como
+    // "símbolo válido, sem transição", e é o que ela é.
     //
     // `escape` é um estado próprio: logo depois da barra a máquina espera um dos
     // quatro símbolos de escape, e nenhum outro cabe, nem a aspa que fecharia a
     // cadeia em `dentro`. `fechada` aceita e não tem saída: `"a""b"` são duas
-    // cadeias, não uma. A nova linha não pertence ao alfabeto de texto, então
-    // uma cadeia não atravessa linhas.
+    // cadeias, não uma.
     Afd afdCadeiaDeCaracteres()
     {
-        Afd afd("cadeia_de_caracteres", alfabetoDeTexto(), 4, 0);
+        Afd afd("cadeia_de_caracteres", todosOsBytes(), 4, 0);
         afd.nomearEstado(0, "inicio");
         afd.nomearEstado(1, "dentro");
         afd.nomearEstado(2, "escape");
         afd.nomearEstado(3, "fechada");
         afd.ligar(0, "\"", 1);
-        afd.ligarTodosExceto(1, "\"\\", 1);
+        afd.ligarTodosExceto(1, "\"\\\n", 1);
         afd.ligar(1, "\"", 3);
         afd.ligar(1, "\\", 2);
         afd.ligar(2, "\"\\nt", 1);
@@ -525,17 +549,22 @@ namespace pinglu
         return afd;
     }
 
-    // comentario := '//' (qualquer-simbolo-menos-nova-linha)*
+    // comentario := '//' (qualquer-byte-menos-nova-linha)*
     //
-    // A nova linha É do alfabeto desta máquina, e de `no_comentario` ela não tem
+    // Qualquer byte cabe no comentário, menos a nova linha: acentos, travessão e
+    // dois-pontos passam como bytes comuns, e é por isso que os comentários dos
+    // exemplos (`// ...seção 4 do feedback — veja: ...`) são aceitos. A nova
+    // linha É do alfabeto desta máquina, e de `no_comentario` ela não tem
     // transição: é isso que faz o comentário terminar "no fim da linha". A
     // cadeia `// a\nb` é recusada, e o motivo é o certo (símbolo válido, sem
     // transição), porque o lexer lerá o comentário até a nova linha e começará
-    // outro token dali. `/` sozinho é a divisão: quem decide entre as duas é o
-    // casamento mais longo, no módulo de análise léxica.
+    // outro token dali. Em arquivo com fim de linha CRLF, o `\r` entra no
+    // comentário como um byte comum, e a nova linha seguinte o encerra.
+    // `/` sozinho é a divisão: quem decide entre as duas é o casamento mais
+    // longo, no módulo de análise léxica.
     Afd afdComentarioDeLinha()
     {
-        Afd afd("comentario_de_linha", alfabetoDeTexto() + "\n", 3, 0);
+        Afd afd("comentario_de_linha", todosOsBytes(), 3, 0);
         afd.nomearEstado(0, "inicio");
         afd.nomearEstado(1, "uma_barra");
         afd.nomearEstado(2, "no_comentario");
@@ -587,6 +616,31 @@ namespace pinglu
         return afd;
     }
 
+    // separador := (' ' | '\t' | '\n' | '\r')+
+    //
+    // Decisão do grupo (27/10/2026, especificacao/alfabeto.md): entre tokens,
+    // espaço, tabulação, nova linha e retorno de carro são SEPARADORES. O lexer
+    // os reconhece e DESCARTA: não geram token e não pertencem a Σ. Existe uma
+    // máquina para eles, e não um `if` escrito à mão no lexer, pelo mesmo motivo
+    // de todas as outras: o que o lexer lê sai do mesmo motor.
+    //
+    // Duas situações: nada lido, e ao menos um separador já lido. A sequência
+    // `\r\n` de um arquivo CRLF é um separador só, e a nova linha que encerra um
+    // comentário (a máquina de comentário não a consome) cai aqui. Um separador
+    // não tem significado próprio além de separar: `int x` precisa dele e `intx`
+    // é outro identificador.
+    Afd afdSeparadores()
+    {
+        const std::string separadores = " \t\n\r";
+        Afd afd("separadores", separadores, 2, 0);
+        afd.nomearEstado(0, "inicio");
+        afd.nomearEstado(1, "corpo");
+        afd.ligar(0, separadores, 1);
+        afd.ligar(1, separadores, 1);
+        afd.marcarAceitacao(1);
+        return afd;
+    }
+
     std::vector<Afd> automatosDoPinglu()
     {
         std::vector<Afd> automatos;
@@ -596,6 +650,7 @@ namespace pinglu
         automatos.push_back(afdCaractere());
         automatos.push_back(afdComentarioDeLinha());
         automatos.push_back(afdOperadoresEDelimitadores());
+        automatos.push_back(afdSeparadores());
         return automatos;
     }
 

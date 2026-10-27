@@ -127,6 +127,7 @@ namespace pinglu
     Afd afdCaractere();
     Afd afdComentarioDeLinha();
     Afd afdOperadoresEDelimitadores();
+    Afd afdSeparadores();
 
     std::vector<Afd> automatosDoPinglu();
 

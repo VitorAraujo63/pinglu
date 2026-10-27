@@ -66,8 +66,9 @@ nesse momento a decisão entra aqui, com a razão ao lado, não antes.
 **Atualização:** esse caso concreto apareceu — a peça "texto entre
 aspas" de `docs/05_padroes_lexicos_e_arvores.md`. A decisão continua
 sendo **não** introduzir coringa: como `especificacao/alfabeto.md`
-enumera um alfabeto finito (89 símbolos), "qualquer símbolo que não seja
-aspas" ainda é uma alternância comum — grande (88 símbolos, 175 nós),
+enumera um alfabeto finito (86 símbolos desde 27/10/2026; eram 89),
+"qualquer símbolo que não seja aspas" ainda é uma alternância comum — grande
+(85 símbolos, 169 nós; eram 88 e 175),
 mas redutível ao núcleo já existente sem operador novo. Coringa só
 passaria a fazer falta se o alfabeto deixasse de ser fechado (por
 exemplo, se o Pinglu passasse a aceitar Unicode arbitrário dentro de uma

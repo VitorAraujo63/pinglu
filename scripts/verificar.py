@@ -24,6 +24,15 @@ CLASSES_LEXICAS = RAIZ / "especificacao" / "classes_lexicas.md"
 EXEMPLOS = RAIZ / "exemplos"
 
 # Palavras que a gramática (docs/01_gramatica.txt) trata como terminal fixo
+# -- se qualquer uma destas aparecer num exemplo, ela PRECISA estar
+# documentada em classes_lexicas.md. Esta lista é o "vocabulário fechado"
+# que o script conhece; crescer a gramática sem atualizar esta lista é o
+# mesmo tipo de furo que o feedback apontou no questionário original.
+#
+# Duas fontes de verdade só ficam iguais se alguém as confere: por isso
+# `verificar_sincronia` compara esta lista com a seção "Palavras Reservadas"
+# de especificacao/classes_lexicas.md e acusa qualquer diferença. Foi assim
+# que `decimal` ficou aqui depois de sair da especificação, sem sintoma.
 PALAVRAS_RESERVADAS = {
     "int", "string", "char", "float", "bool", "list",
     "true", "false",
@@ -49,6 +58,43 @@ def carregar_keywords_documentadas(caminho: Path) -> set[str]:
         if palavra and re.fullmatch(r"[a-zA-Z_][a-zA-Z0-9_]*", palavra):
             documentadas.add(palavra)
     return documentadas
+
+
+def carregar_reservadas_documentadas(caminho: Path) -> set[str]:
+    """As palavras da seção "Palavras Reservadas" de classes_lexicas.md.
+
+    Só essa seção interessa: identificador, numero_inteiro e os outros
+    literais também têm linha `nome -- descrição`, mas não são palavras
+    reservadas.
+    """
+    reservadas = set()
+    na_secao = False
+    for linha in caminho.read_text(encoding="utf-8").splitlines():
+        if linha.startswith("## "):
+            na_secao = linha.strip().lower() == "## palavras reservadas"
+            continue
+        if na_secao and "--" in linha:
+            palavra = linha.split("--", 1)[0].strip()
+            if re.fullmatch(r"[a-zA-Z_][a-zA-Z0-9_]*", palavra):
+                reservadas.add(palavra)
+    return reservadas
+
+
+def verificar_sincronia(caminho: Path) -> list[str]:
+    """Acusa diferença entre PALAVRAS_RESERVADAS e a especificação."""
+    documentadas = carregar_reservadas_documentadas(caminho)
+    problemas = []
+    for palavra in sorted(documentadas - PALAVRAS_RESERVADAS):
+        problemas.append(
+            f"'{palavra}' é reservada em {caminho.relative_to(RAIZ)} mas "
+            f"falta em PALAVRAS_RESERVADAS (scripts/verificar.py)"
+        )
+    for palavra in sorted(PALAVRAS_RESERVADAS - documentadas):
+        problemas.append(
+            f"'{palavra}' está em PALAVRAS_RESERVADAS mas não é reservada "
+            f"em {caminho.relative_to(RAIZ)}"
+        )
+    return problemas
 
 
 def remover_comentarios_e_literais(fonte: str) -> str:
@@ -96,6 +142,14 @@ def main() -> int:
         return 0
 
     total_problemas = 0
+    problemas_de_sincronia = verificar_sincronia(CLASSES_LEXICAS)
+    if problemas_de_sincronia:
+        total_problemas += len(problemas_de_sincronia)
+        print("[FALHA] sincronia entre verificar.py e classes_lexicas.md")
+        for problema in problemas_de_sincronia:
+            print(f"        {problema}")
+    else:
+        print("[ok]    sincronia entre verificar.py e classes_lexicas.md")
     for caminho in arquivos:
         problemas = verificar_arquivo(caminho, documentadas)
         nome = caminho.relative_to(RAIZ)
