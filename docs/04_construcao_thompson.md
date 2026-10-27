@@ -194,8 +194,4 @@ estarem nela.
 
 ## Observação para o diário da construção
 
-A Construção de Thompson passo da definição apenas com algumas alterações em comparação com
-o código de base do projeto do professor. Cada tipo de nó da linguagem virou um `case`
-em `exemplos/07_casos_afn.txt`, ao todo são 104 casos da bateria de teste e todos eles
-passaram, fora isso não teve nenhuma outra mudança de decisão em comparação com o projeto
-do professor.
+A construção de Thompson passou da definição para o código quase sem adaptação: cada tipo de nó da árvore virou um case em src/04_afn.cpp (cinco, porque o Pinglu não tem coringa), e a composição dos blocos virou a recursão. Houve decisões próprias em relação ao projeto de referência: o rótulo da transição vazia é um int (-1) e não o byte zero, porque string e comentário do Pinglu aceitam qualquer byte, e o leitor da bateria reprova linhas malformadas. A bateria exemplos/07_casos_afn.txt tem 104 casos conferidos à mão e todos passam. Nesta etapa a transcrição foi direta; a determinização, no módulo seguinte, não deve ser.
