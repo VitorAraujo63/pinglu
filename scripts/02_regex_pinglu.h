@@ -9,17 +9,6 @@
 // Recebe o texto de um pattern e devolve a árvore que a construção de Thompson
 // consumirá na etapa seguinte — ou o primeiro erro encontrado, com a posição
 // exata no texto.
-//
-// A árvore usa apenas o NÚCLEO MÍNIMO: concatenação, alternância e fecho, mais
-// as duas folhas (símbolo e cadeia vazia). Toda notação de conveniência — `+`,
-// `?`, classe de símbolos — é reduzida a esse núcleo durante a leitura, e não
-// depois: o que sai daqui já não conhece os operadores reduzidos, e nenhuma
-// peça posterior precisa aprendê-los.
-//
-// Os nós vivem num vetor e se referenciam por índice, nunca por ponteiro. A
-// árvore é copiável, serializável e não vaza; e a duplicação de subárvore que a
-// redução de `+` exige vira uma cópia de faixa de vetor, não um passeio
-// recursivo de alocação.
 
 #ifndef PINGLU_02_REGEX_H
 #define PINGLU_02_REGEX_H

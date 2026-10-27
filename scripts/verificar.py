@@ -24,12 +24,9 @@ CLASSES_LEXICAS = RAIZ / "especificacao" / "classes_lexicas.md"
 EXEMPLOS = RAIZ / "exemplos"
 
 # Palavras que a gramática (docs/01_gramatica.txt) trata como terminal fixo
-# -- se qualquer uma destas aparecer num exemplo, ela PRECISA estar
-# documentada em classes_lexicas.md. Esta lista é o "vocabulário fechado"
-# que o script conhece; crescer a gramática sem atualizar esta lista é o
-# mesmo tipo de furo que o feedback apontou no questionário original.
 PALAVRAS_RESERVADAS = {
-    "int", "string", "char", "decimal", "float", "list",
+    "int", "string", "char", "float", "bool", "list",
+    "true", "false",
     "if", "else", "while", "for", "pineach", "in",
     "print", "func", "return", "forma", "escolher",
 }
