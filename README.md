@@ -17,10 +17,11 @@ Pré-requisitos: `make`, `g++` com suporte a C++20 e `python3` 3.9 ou superior
 (testado com `g++` 13.3 e `python3` 3.12).
 
 ```
-make verificar   # roda tudo: consistência léxica e os módulos 02, 03 e 04
-make regex       # só o analisador de expressões regulares
-make afd         # só os autômatos finitos determinísticos
-make afn         # só o AFN, a construção de Thompson e a bateria conferida à mão
+make verificar     # roda tudo: consistência léxica e os módulos 02, 03, 04 e 05
+make regex         # só o analisador de expressões regulares
+make afd           # só os autômatos finitos determinísticos
+make afn           # só o AFN, a construção de Thompson e a bateria conferida à mão
+make determinizar  # só a determinização (construção de subconjuntos)
 make limpar      # apaga build/
 ```
 

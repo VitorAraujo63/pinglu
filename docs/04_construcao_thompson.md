@@ -104,7 +104,7 @@ exigiria uma alternância de 255 símbolos escrita por extenso.
 
 ## A bateria conferida à mão
 
-`exemplos/07_casos_afn.txt` tem 104 casos (50 de aceitação, 54 de recusa), um por
+`exemplos/07_casos_afn.txt` tem 106 casos (51 de aceitação, 55 de recusa), um por
 linha: padrão, cadeia e veredito, separados por tabulação. É um arquivo de dados
 para que acrescentar um caso seja barato: um caso que exige recompilar não é
 escrito na tarde em que alguém descobre a cadeia que quebra o sistema.

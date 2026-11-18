@@ -26,6 +26,7 @@
 
 #include <cstddef>
 #include <istream>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -97,6 +98,19 @@ namespace pinglu
         // esquecer.
         std::vector<Estado> fechoVazio(const std::vector<Estado> &conjunto) const;
 
+        // O movimento por símbolo: os destinos das transições que leem `rotulo`
+        // (um byte, 0..255) a partir de algum estado do conjunto, sem repetição
+        // e na ordem em que aparecem. NÃO aplica o fecho vazio: quem chama
+        // decide (a simulação e a determinização aplicam logo em seguida).
+        // `rotulo` igual a kEpsilon lança: mover por transição vazia é o fecho.
+        std::vector<Estado> mover(const std::vector<Estado> &conjunto, int rotulo) const;
+
+        // Os rótulos de símbolo que aparecem nas transições, sem kEpsilon. É o
+        // alfabeto FECHADO que a determinização percorre. Calculado a cada
+        // chamada, pelo mesmo motivo de quantidadeDeTransicoesVazias(): reflete
+        // o que a máquina tem, e não o que já entrou nela.
+        std::set<int> alfabeto() const;
+
         bool aceita(const std::string &cadeia) const;
         Simulacao simular(const std::string &cadeia) const;
 
@@ -107,6 +121,13 @@ namespace pinglu
         Estado inicial_ = 0;
         Estado aceitacao_ = 0;
     };
+
+    // Um símbolo como o leitor consegue ver num traço ou numa tabela: o byte
+    // zero, a nova linha e os bytes fora do ASCII imprimível não saem crus.
+    std::string simboloVisivel(char simbolo);
+
+    // Um conjunto de estados como texto, na ordem em que vem: "{ 0, 2, 4 }".
+    std::string conjuntoComoTexto(const std::vector<Estado> &conjunto);
 
     // Constrói a máquina a partir da árvore devolvida por analisarExpressao().
     // Uma árvore vazia dá a máquina de um estado só, que aceita apenas a cadeia

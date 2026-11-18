@@ -29,7 +29,7 @@ pinglu/
 │   ├── 04_funcao.pglu                    — func/return
 │   ├── 05_escolher_completo.pglu         — forma/escolher exaustivo (aceito)
 │   ├── 06_escolher_incompleto.pglu       — forma/escolher incompleto (deve ser recusado)
-│   └── 07_casos_afn.txt                      — 104 casos (padrão, cadeia, veredito) determinados à mão,
+│   └── 07_casos_afn.txt                      — 106 casos (padrão, cadeia, veredito) determinados à mão,
 │                                            antes do código; o leitor reprova linha malformada
 ├── include/                             — as interfaces do compilador, um .h por assunto
 │   ├── 02_regex_pinglu.h

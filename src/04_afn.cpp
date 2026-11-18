@@ -6,57 +6,52 @@
 namespace pinglu
 {
 
-    namespace
+    // --- formatação ------------------------------------------------------------
+
+    std::string simboloVisivel(const char simbolo)
     {
-
-        // Um símbolo como o leitor consegue ver no traço: o byte zero, a nova
-        // linha e os bytes fora do ASCII imprimível não podem sair crus.
-        std::string simboloVisivel(const char simbolo)
+        switch (simbolo)
         {
-            switch (simbolo)
-            {
-            case ' ':
-                return "<esp>";
-            case '\n':
-                return "\\n";
-            case '\t':
-                return "\\t";
-            case '\r':
-                return "\\r";
-            default:
-                break;
-            }
-            const unsigned char byte = static_cast<unsigned char>(simbolo);
-            if (byte < 0x20 || byte >= 0x7F)
-            {
-                static const char *const hexa = "0123456789abcdef";
-                std::string texto = "\\x";
-                texto += hexa[byte >> 4];
-                texto += hexa[byte & 0x0F];
-                return texto;
-            }
-            return std::string(1, simbolo);
+        case ' ':
+            return "<esp>";
+        case '\n':
+            return "\\n";
+        case '\t':
+            return "\\t";
+        case '\r':
+            return "\\r";
+        default:
+            break;
         }
-
-        std::string conjuntoComoTexto(const std::vector<Estado> &conjunto)
+        const unsigned char byte = static_cast<unsigned char>(simbolo);
+        if (byte < 0x20 || byte >= 0x7F)
         {
-            if (conjunto.empty())
-            {
-                return "{ }";
-            }
-            std::string texto = "{ ";
-            for (std::size_t i = 0; i < conjunto.size(); ++i)
-            {
-                if (i > 0)
-                {
-                    texto += ", ";
-                }
-                texto += std::to_string(conjunto[i]);
-            }
-            return texto + " }";
+            static const char *const hexa = "0123456789abcdef";
+            std::string texto = "\\x";
+            texto += hexa[byte >> 4];
+            texto += hexa[byte & 0x0F];
+            return texto;
         }
+        return std::string(1, simbolo);
+    }
 
-    } // namespace
+    std::string conjuntoComoTexto(const std::vector<Estado> &conjunto)
+    {
+        if (conjunto.empty())
+        {
+            return "{ }";
+        }
+        std::string texto = "{ ";
+        for (std::size_t i = 0; i < conjunto.size(); ++i)
+        {
+            if (i > 0)
+            {
+                texto += ", ";
+            }
+            texto += std::to_string(conjunto[i]);
+        }
+        return texto + " }";
+    }
 
     // --- a máquina ---------------------------------------------------------------
 
@@ -204,6 +199,55 @@ namespace pinglu
     }
     // recorte:fim fecho-vazio-com-marcacao
 
+    // recorte:inicio mover-por-simbolo
+    std::vector<Estado> Afn::mover(const std::vector<Estado> &conjunto, const int rotulo) const
+    {
+        if (rotulo < 0 || rotulo > 255)
+        {
+            throw std::invalid_argument("Afn::mover: o rotulo deve ser um byte (0..255).");
+        }
+        // `presente` responde "este destino já entrou no resultado?" com uma
+        // consulta, sem busca. O resultado em si é o vetor, que guarda a ordem
+        // de inserção.
+        std::vector<char> presente(transicoes_.size(), 0);
+        std::vector<Estado> resultado;
+        for (const Estado estado : conjunto)
+        {
+            if (estado >= transicoes_.size())
+            {
+                throw std::invalid_argument("Afn::mover: estado inexistente no conjunto.");
+            }
+            for (const TransicaoAfn &transicao : transicoes_[estado])
+            {
+                // kEpsilon é -1 e `rotulo` é 0..255: um byte zero na entrada
+                // jamais casa com uma transição vazia.
+                if (transicao.rotulo == rotulo && presente[transicao.destino] == 0)
+                {
+                    presente[transicao.destino] = 1;
+                    resultado.push_back(transicao.destino);
+                }
+            }
+        }
+        return resultado;
+    }
+    // recorte:fim mover-por-simbolo
+
+    std::set<int> Afn::alfabeto() const
+    {
+        std::set<int> simbolos;
+        for (const std::vector<TransicaoAfn> &saidas : transicoes_)
+        {
+            for (const TransicaoAfn &transicao : saidas)
+            {
+                if (transicao.rotulo != kEpsilon)
+                {
+                    simbolos.insert(transicao.rotulo);
+                }
+            }
+        }
+        return simbolos;
+    }
+
     Simulacao Afn::simular(const std::string &cadeia) const
     {
         Simulacao simulacao;
@@ -222,35 +266,10 @@ namespace pinglu
         simulacao.maiorConjuntoAtivo = ativos.size();
         // recorte:fim conjunto-ativo-comeca-no-fecho
 
-        // `presente` responde "este estado já entrou em `proximos`?" com uma
-        // consulta, sem busca. É alocada uma vez e, a cada símbolo, só se
-        // zeram as posições que entraram. O conjunto em si é o vetor
-        // `proximos`, que guarda a ordem de inserção e é o que se percorre.
-        std::vector<char> presente(transicoes_.size(), 0);
-
+        // Cada passo é o movimento seguido do fecho: S_i = E(mover(S_i-1, a_i)).
         for (const char simbolo : cadeia)
         {
-            const int byte = static_cast<unsigned char>(simbolo);
-            std::vector<Estado> proximos;
-            for (const Estado estado : ativos)
-            {
-                for (const TransicaoAfn &transicao : transicoes_[estado])
-                {
-                    // kEpsilon é -1 e `byte` é 0..255: um byte zero na entrada
-                    // jamais casa com uma transição vazia.
-                    if (transicao.rotulo == byte && presente[transicao.destino] == 0)
-                    {
-                        presente[transicao.destino] = 1;
-                        proximos.push_back(transicao.destino);
-                    }
-                }
-            }
-            for (const Estado estado : proximos)
-            {
-                presente[estado] = 0;
-            }
-
-            ativos = fechoVazio(proximos);
+            ativos = fechoVazio(mover(ativos, static_cast<unsigned char>(simbolo)));
             simulacao.passos.push_back(PassoDaSimulacao{false, simbolo, ativos});
             if (ativos.size() > simulacao.maiorConjuntoAtivo)
             {

@@ -93,6 +93,10 @@ a\*	a	recusa
 (a|b)*c	abb	recusa
 (a|b)*c	ca	recusa
 (a|b)*c		recusa
+# os dois casos que a descricao da atividade cita: (a|b)* consome a, b, a, b,
+# a e o c obrigatorio fecha; sem o c final, nada e aceito
+(a|b)*c	ababac	aceita
+(a|b)*c	abab	recusa
 (ab|c)*d	d	aceita
 (ab|c)*d	abcabd	aceita
 (ab|c)*d	abcd	aceita
