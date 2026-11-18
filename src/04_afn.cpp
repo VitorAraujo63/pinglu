@@ -365,9 +365,9 @@ namespace pinglu
                 const Estado entrada = afn.novoEstado();
                 const Estado saida = afn.novoEstado();
                 afn.adicionarTransicao(entrada, kEpsilon, interno.entrada);       // uma vez ou mais
-                afn.adicionarTransicao(entrada, kEpsilon, saida);                  // zero vezes
+                afn.adicionarTransicao(entrada, kEpsilon, saida);                 // zero vezes
                 afn.adicionarTransicao(interno.saida, kEpsilon, interno.entrada); // de novo
-                afn.adicionarTransicao(interno.saida, kEpsilon, saida);            // basta
+                afn.adicionarTransicao(interno.saida, kEpsilon, saida);           // basta
                 return Bloco{entrada, saida};
             }
                 // recorte:fim thompson-fecho

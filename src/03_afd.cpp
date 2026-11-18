@@ -8,7 +8,6 @@ namespace pinglu
 
     namespace
     {
-
         constexpr std::size_t kSemColuna = static_cast<std::size_t>(-1);
 
         // Alinha a coluna para que a tabela impressa fique legível na projeção.

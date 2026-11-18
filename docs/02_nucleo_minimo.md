@@ -64,7 +64,7 @@ pode conter qualquer caractere exceto aspas) exija resolver isso — e
 nesse momento a decisão entra aqui, com a razão ao lado, não antes.
 
 **Atualização:** esse caso concreto apareceu — a peça "texto entre
-aspas" de `docs/05_padroes_lexicos_e_arvores.md`. A decisão continua
+aspas". A decisão continua
 sendo **não** introduzir coringa: como `especificacao/alfabeto.md`
 enumera um alfabeto finito (86 símbolos desde 27/10/2026; eram 89),
 "qualquer símbolo que não seja aspas" ainda é uma alternância comum — grande

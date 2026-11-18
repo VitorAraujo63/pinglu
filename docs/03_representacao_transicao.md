@@ -6,7 +6,7 @@ continuam abertas e não fazem parte da decisão.
 
 ## O que foi escolhido
 
-**Matriz densa**, indexada por estado e por coluna de símbolo (`src/03_afd.h`). A
+**Matriz densa**, indexada por estado e por coluna de símbolo (`include/03_afd.h`). A
 coluna sai de um mapeamento byte → coluna calculado uma vez no construtor, e
 consultar uma transição custa uma multiplicação, uma soma e um acesso a vetor.
 

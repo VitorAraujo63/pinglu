@@ -31,12 +31,16 @@ pinglu/
 │   ├── 06_escolher_incompleto.pglu       — forma/escolher incompleto (deve ser recusado)
 │   └── 07_casos_afn.txt                      — 104 casos (padrão, cadeia, veredito) determinados à mão,
 │                                            antes do código; o leitor reprova linha malformada
-├── src/                                 — o código do compilador, um par .h/.cpp por assunto
-│   ├── 02_regex_pinglu.h/.cpp            — expressão regular -> árvore reduzida ao núcleo,
+├── include/                             — as interfaces do compilador, um .h por assunto
+│   ├── 02_regex_pinglu.h
+│   ├── 03_afd.h
+│   └── 04_afn.h
+├── src/                                 — o código do compilador, um .cpp por assunto
+│   ├── 02_regex_pinglu.cpp               — expressão regular -> árvore reduzida ao núcleo,
 │   │                                        com recusa e posição do erro
-│   ├── 03_afd.h/.cpp                     — o AFD (matriz densa, função total) e as sete
+│   ├── 03_afd.cpp                        — o AFD (matriz densa, função total) e as sete
 │   │                                        máquinas das classes léxicas
-│   └── 04_afn.h/.cpp                     — o AFN, a construção de Thompson, a simulação por
+│   └── 04_afn.cpp                        — o AFN, a construção de Thompson, a simulação por
 │                                            conjunto de estados e a leitura da bateria
 ├── demos/                               — uma demonstração por módulo, com a saída esperada
 │   ├── 02_demo.cpp                       — reduções, notações equivalentes, erros com posição
@@ -64,7 +68,8 @@ pinglu/
 
 `especificacao/` guarda o vocabulário — o que existe independente de como
 o compilador vai ser escrito. `exemplos/` guarda os pares entrada/saída
-esperada. `src/` guarda o que é compilado, e `demos/` guarda o que o exercita.
+esperada. `include/` e `src/` guardam o que é compilado (as interfaces e as
+implementações), e `demos/` guarda o que o exercita.
 `scripts/` guarda o verificador, que confere a documentação contra os exemplos.
 `docs/` guarda as decisões de projeto. Essa separação é a mesma que o material
 do professor recomenda: o que se lê fica isolado do que se compila, para que
@@ -98,7 +103,7 @@ simples é WSL ou MSYS2.
 ## O que falta acrescentar
 
 As próximas peças (o analisador léxico, a construção de Thompson, a
-determinização) entram em `src/` e `demos/` da mesma forma. Três decisões
+determinização) entram em `include/`, `src/` e `demos/` da mesma forma. Três decisões
 continuam valendo:
 
 **Um arquivo por assunto**, não um arquivo único com tudo — o mesmo

@@ -1,6 +1,6 @@
 # A construção de Thompson e a simulação do AFN — decisões e medidas
 
-O que entrou neste módulo: `src/04_afn.h/.cpp` (a máquina, a construção, a
+O que entrou neste módulo: `include/04_afn.h` e `src/04_afn.cpp` (a máquina, a construção, a
 simulação e a leitura da bateria), `demos/04_demo.cpp` (a demonstração, que
 também é o teste) e `exemplos/07_casos_afn.txt` (a bateria conferida à mão). Os
 números deste documento saem de `make afn`.

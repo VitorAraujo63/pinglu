@@ -13,7 +13,6 @@
 #ifndef PINGLU_02_REGEX_H
 #define PINGLU_02_REGEX_H
 
-#include <cstddef>
 #include <string>
 #include <vector>
 

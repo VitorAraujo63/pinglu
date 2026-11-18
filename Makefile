@@ -18,20 +18,20 @@
 # ninguém lê hoje vira defeito silencioso depois.
 
 CXX      ?= g++
-CXXFLAGS := -std=c++20 -Wall -Wextra -Werror -Isrc
+CXXFLAGS := -std=c++20 -Wall -Wextra -Werror -Iinclude
 
-build/02_demo: src/02_regex_pinglu.cpp src/02_regex_pinglu.h demos/02_demo.cpp
+build/02_demo: src/02_regex_pinglu.cpp include/02_regex_pinglu.h demos/02_demo.cpp
 	mkdir -p build
 	$(CXX) $(CXXFLAGS) src/02_regex_pinglu.cpp demos/02_demo.cpp -o $@
 
-build/03_demo: src/03_afd.cpp src/03_afd.h demos/03_demo.cpp
+build/03_demo: src/03_afd.cpp include/03_afd.h demos/03_demo.cpp
 	mkdir -p build
 	$(CXX) $(CXXFLAGS) src/03_afd.cpp demos/03_demo.cpp -o $@
 
 # A demonstração do 04 usa as máquinas feitas à mão do 03 como referência,
 # por isso liga os três módulos. A bateria (exemplos/07_casos_afn.txt) também é
 # dependência: mudar um caso refaz o alvo.
-build/04_demo: src/02_regex_pinglu.cpp src/02_regex_pinglu.h src/03_afd.cpp src/03_afd.h src/04_afn.cpp src/04_afn.h demos/04_demo.cpp exemplos/07_casos_afn.txt
+build/04_demo: src/02_regex_pinglu.cpp include/02_regex_pinglu.h src/03_afd.cpp include/03_afd.h src/04_afn.cpp include/04_afn.h demos/04_demo.cpp exemplos/07_casos_afn.txt
 	mkdir -p build
 	$(CXX) $(CXXFLAGS) src/02_regex_pinglu.cpp src/03_afd.cpp src/04_afn.cpp demos/04_demo.cpp -o $@
 
