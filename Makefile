@@ -1,4 +1,4 @@
-.PHONY: verificar regex afd afn determinizar limpar
+.PHONY: verificar regex afd afn determinizar minimizar limpar
 
 # O comando único que docs/01_recorte.md § "O comando único" e a Tarefa 3
 # do módulo 1 pedem: um jeito só de reconstruir e rodar os casos
@@ -12,7 +12,10 @@
 #   make regex       só a demonstração do analisador de expressões (02).
 #   make afd         só a demonstração dos autômatos determinísticos (03).
 #   make afn         só a demonstração do AFN e da bateria à mão (04).
-#   make determinizar só a demonstração da construção de subconjuntos (05).
+#   make determinizar só a demonstração do módulo 05: construção de
+#                    subconjuntos, minimização, comparação das três máquinas
+#                    e explosão de estados.
+#   make minimizar   o mesmo que make determinizar.
 #   make limpar      apaga build/.
 #
 # Os avisos do compilador são tratados como erro (-Werror): um aviso que
@@ -36,10 +39,11 @@ build/04_demo: src/02_regex_pinglu.cpp include/02_regex_pinglu.h src/03_afd.cpp 
 	mkdir -p build
 	$(CXX) $(CXXFLAGS) src/02_regex_pinglu.cpp src/03_afd.cpp src/04_afn.cpp demos/04_demo.cpp -o $@
 
-# O 05 determiniza o AFN do 04 e se compara com as máquinas feitas à mão do 03.
-build/05_demo: src/02_regex_pinglu.cpp include/02_regex_pinglu.h src/03_afd.cpp include/03_afd.h src/04_afn.cpp include/04_afn.h src/05_determinizacao.cpp include/05_determinizacao.h demos/05_demo.cpp exemplos/07_casos_afn.txt
+# O 05 determiniza o AFN do 04, minimiza o resultado e se compara com as
+# máquinas feitas à mão do 03.
+build/05_demo: src/02_regex_pinglu.cpp include/02_regex_pinglu.h src/03_afd.cpp include/03_afd.h src/04_afn.cpp include/04_afn.h src/05_determinizacao.cpp include/05_determinizacao.h src/05_minimizacao.cpp include/05_minimizacao.h demos/05_demo.cpp exemplos/07_casos_afn.txt
 	mkdir -p build
-	$(CXX) $(CXXFLAGS) src/02_regex_pinglu.cpp src/03_afd.cpp src/04_afn.cpp src/05_determinizacao.cpp demos/05_demo.cpp -o $@
+	$(CXX) $(CXXFLAGS) src/02_regex_pinglu.cpp src/03_afd.cpp src/04_afn.cpp src/05_determinizacao.cpp src/05_minimizacao.cpp demos/05_demo.cpp -o $@
 
 regex: build/02_demo
 	./build/02_demo
@@ -52,6 +56,8 @@ afn: build/04_demo
 
 determinizar: build/05_demo
 	./build/05_demo
+
+minimizar: determinizar
 
 verificar: build/02_demo build/03_demo build/04_demo build/05_demo
 	python3 scripts/verificar.py

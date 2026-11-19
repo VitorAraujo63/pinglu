@@ -7,7 +7,8 @@ apontou que "instalá-lo agora custa cinco minutos", e adiar isso até existir
 código de verdade era exatamente o erro que a seção "Onde é fácil errar"
 deste documento já alertava contra. Hoje ele já carrega código: o analisador
 de expressões regulares (módulo 02), os autômatos finitos determinísticos (módulo 03)
-e o autômato não determinístico com a construção de Thompson (módulo 04).
+o autômato não determinístico com a construção de Thompson (módulo 04) e a
+determinização com a minimização (módulo 05).
 Nenhum analisador léxico, parser ou VM do Pinglu existe ainda.
 
 ## O que existe, e o papel de cada parte
@@ -34,19 +35,26 @@ pinglu/
 ├── include/                             — as interfaces do compilador, um .h por assunto
 │   ├── 02_regex_pinglu.h
 │   ├── 03_afd.h
-│   └── 04_afn.h
+│   ├── 04_afn.h
+│   ├── 05_determinizacao.h
+│   └── 05_minimizacao.h
 ├── src/                                 — o código do compilador, um .cpp por assunto
 │   ├── 02_regex_pinglu.cpp               — expressão regular -> árvore reduzida ao núcleo,
 │   │                                        com recusa e posição do erro
 │   ├── 03_afd.cpp                        — o AFD (matriz densa, função total) e as sete
 │   │                                        máquinas das classes léxicas
-│   └── 04_afn.cpp                        — o AFN, a construção de Thompson, a simulação por
-│                                            conjunto de estados e a leitura da bateria
+│   ├── 04_afn.cpp                        — o AFN, a construção de Thompson, a simulação por
+│   │                                        conjunto de estados e a leitura da bateria
+│   ├── 05_determinizacao.cpp             — o AFD gerado e a construção de subconjuntos
+│   └── 05_minimizacao.cpp                — completar, descartar inacessíveis, refinamento de
+│                                            partições e a comparação das três máquinas
 ├── demos/                               — uma demonstração por módulo, com a saída esperada
 │   ├── 02_demo.cpp                       — reduções, notações equivalentes, erros com posição
 │   ├── 03_demo.cpp                       — tabelas, casos aceitos e recusados, conta de memória
-│   └── 04_demo.cpp                       — construção com traço, custo previsto, bordas, equivalência
-│                                            com o módulo 03 e a bateria
+│   ├── 04_demo.cpp                       — construção com traço, custo previsto, bordas, equivalência
+│   │                                        com o módulo 03 e a bateria
+│   └── 05_demo.cpp                       — determinização e minimização contra o guia, as três
+│                                            máquinas comparadas e a explosão de estados
 ├── scripts/
 │   └── verificar.py                     — consistência léxica dos exemplos e sincronia da
 │                                            lista de reservadas com classes_lexicas.md
@@ -62,8 +70,10 @@ pinglu/
     ├── 02_escolher_e_formas.md          — design do escolher/forma (emenda do feedback)
     ├── 03_representacao_transicao.md    — a representação da função de transição, a conta
     │                                       em bytes e as pendências do alfabeto
-    └── 04_construcao_thompson.md        — a construção, a simulação, a bateria, as medidas e os
-                                            defeitos injetados
+    ├── 04_construcao_thompson.md        — a construção, a simulação, a bateria, as medidas e os
+    │                                       defeitos injetados
+    └── 05_determinizacao_minimizacao.md — subconjuntos, refinamento de partições, as três
+                                            máquinas, a explosão e os argumentos de correção
 ```
 
 `especificacao/` guarda o vocabulário — o que existe independente de como
@@ -77,7 +87,7 @@ trocar a implementação nunca signifique reescrever a especificação junto.
 
 ## O que `make verificar` roda
 
-Quatro coisas, nesta ordem, e para na primeira que falhar:
+Cinco coisas, nesta ordem, e para na primeira que falhar:
 
 1. `scripts/verificar.py` — toda palavra reservada usada em `exemplos/` tem
    entrada em `classes_lexicas.md`, e a lista de reservadas do script é
@@ -90,10 +100,14 @@ Quatro coisas, nesta ordem, e para na primeira que falhar:
 4. `build/04_demo` — a construção de Thompson e a simulação, contra contas feitas
    no papel, contra as máquinas feitas à mão do módulo 03 e contra a bateria
    conferida à mão (`exemplos/07_casos_afn.txt`).
+5. `build/05_demo` — a determinização e a minimização contra as tabelas do guia,
+   a comparação das três máquinas (AFN, AFD e mínimo) nos dois saltos, a
+   bateria no AFD e no mínimo, as classes léxicas contra o módulo 03 e a
+   explosão de estados.
 
-As três demonstrações saem com código 1 se um caso divergir do esperado. É isso
+As quatro demonstrações saem com código 1 se um caso divergir do esperado. É isso
 que as torna testes, e não só exibição. Para rodar uma só: `make regex`,
-`make afd` ou `make afn`. Para apagar o que foi gerado: `make limpar`.
+`make afd`, `make afn` ou `make determinizar`. Para apagar o que foi gerado: `make limpar`.
 
 Pré-requisitos: `make`, `g++` com suporte a C++20 e `python3` 3.9 ou superior
 (a sintaxe `set[str]` do script exige isso). Testado com `g++` 13.3 e
@@ -102,8 +116,7 @@ simples é WSL ou MSYS2.
 
 ## O que falta acrescentar
 
-As próximas peças (o analisador léxico, a construção de Thompson, a
-determinização) entram em `include/`, `src/` e `demos/` da mesma forma. Três decisões
+As próximas peças (o analisador léxico, o analisador sintático) entram em `include/`, `src/` e `demos/` da mesma forma. Três decisões
 continuam valendo:
 
 **Um arquivo por assunto**, não um arquivo único com tudo — o mesmo

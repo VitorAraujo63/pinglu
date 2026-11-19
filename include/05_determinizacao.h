@@ -71,8 +71,9 @@ namespace pinglu
         bool aceita(const std::string &cadeia) const;
 
         // A tabela de transições, uma linha por estado, com o conjunto que cada
-        // um representa e a marca de inicial (->) e de aceitação (*).
-        std::string formatarTabela() const;
+        // um representa e a marca de inicial (->) e de aceitação (*). `prefixo`
+        // nomeia os estados: "D" no AFD da determinização, "M" no mínimo.
+        std::string formatarTabela(const std::string &prefixo = "D") const;
 
     private:
         void exigirEstado(Estado estado, const char *quem) const;

@@ -128,21 +128,21 @@ namespace pinglu
         return finais_.contains(atual);
     }
 
-    std::string AfdGerado::formatarTabela() const
+    std::string AfdGerado::formatarTabela(const std::string &prefixo) const
     {
         std::string texto;
         for (Estado estado = 0; estado < transicoes_.size(); ++estado)
         {
             texto += estado == inicial_ ? "  ->" : "    ";
             texto += finais_.contains(estado) ? "* " : "  ";
-            std::string nome = "D" + std::to_string(estado);
+            std::string nome = prefixo + std::to_string(estado);
             nome.resize(std::max<std::size_t>(nome.size(), 5), ' ');
             std::string conjunto = conjuntoComoTexto(representa_[estado]);
             conjunto.resize(std::max<std::size_t>(conjunto.size(), 28), ' ');
             texto += nome + conjunto;
             for (const auto &[rotulo, destino] : transicoes_[estado])
             {
-                texto += " " + simboloVisivel(static_cast<char>(rotulo)) + "->D" + std::to_string(destino);
+                texto += " " + simboloVisivel(static_cast<char>(rotulo)) + "->" + prefixo + std::to_string(destino);
             }
             texto += "\n";
         }
